@@ -1,0 +1,10 @@
+        [{
+          "relation": ["delegate_permission/common.handle_all_urls"],
+          "target": {
+            "namespace": "android_app",
+            "package_name": "com.example.congressmanage",
+            "sha256_cert_fingerprints":
+            ["EB:EA:6D:7D:87:BC:0E:F3:B2:43:38:2A:AC:0F:1F:53:35:83:B2:FD:48:6A:5B:F9:92:28:89:C2:EB:0A:CB:A7"]
+          }
+        }]
+        
