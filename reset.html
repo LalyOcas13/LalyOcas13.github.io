@@ -2,15 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restablecer Contraseña</title>
-    <script type="module">
-        // NO CAMBIES NADA AQUÍ
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-        const supabaseUrl = 'https://wvlhpiehlsaxwfaxmsjv.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2bGhwaWVobHNheHdmYXhtc2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2NTM2MTcsImV4cCI6MjA3OTIyOTYxN30.0VigRpBjTHpWPamN8bqBAR4ynXjtnR7j3fi5CEgQM0w'
-        window.supabase = createClient(supabaseUrl, supabaseKey)
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Restablecer Contraseña</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; color: #333; }
         #container { background-color: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; }
@@ -32,35 +24,48 @@
         <p id="message">Verificando enlace...</p>
     </div>
 
+    <!-- Script único y corregido -->
     <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        // 1. Configuración del cliente
+        const supabaseUrl = 'https://wvlhpiehlsaxwfaxmsjv.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2bGhwaWVobHNheHdmYXhtc2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2NTM2MTcsImV4cCI6MjA3OTIyOTYxN30.0VigRpBjTHpWPamN8bqBAR4ynXjtnR7j3fi5CEgQM0w';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // 2. Referencias a los elementos del HTML
         const messageEl = document.getElementById('message');
         const formEl = document.getElementById('reset-form');
-        
-        // CORRECCIÓN: El listener ahora está en el lugar correcto
-        window.supabase.auth.onAuthStateChange(async (event, session) => {
+        const passwordInput = document.getElementById('password');
+
+        // 3. Listener para el evento de recuperación
+        supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === "PASSWORD_RECOVERY") {
+                // Si el evento es el correcto, muestra el formulario
                 messageEl.style.display = 'none';
                 formEl.style.display = 'block';
-
-                formEl.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const password = document.getElementById('password').value;
-                    
-                    const { data, error } = await window.supabase.auth.updateUser({
-                        password: password
-                    });
-
-                    if (error) {
-                        messageEl.textContent = 'Error: ' + error.message;
-                        messageEl.style.color = 'red';
-                    } else {
-                        messageEl.textContent = '¡Contraseña actualizada con éxito! Ya puedes cerrar esta página y volver a la app.';
-                        messageEl.style.color = 'green';
-                        formEl.style.display = 'none';
-                    }
-                    messageEl.style.display = 'block';
-                });
             }
+        });
+
+        // 4. Listener para cuando se envía el formulario
+        formEl.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = passwordInput.value;
+
+            // Llama a Supabase para actualizar la contraseña del usuario
+            const { data, error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                messageEl.textContent = 'Error al actualizar: ' + error.message;
+                messageEl.style.color = 'red';
+            } else {
+                messageEl.textContent = '¡Contraseña actualizada con éxito! Ya puedes cerrar esta página.';
+                messageEl.style.color = 'green';
+                formEl.style.display = 'none';
+            }
+            messageEl.style.display = 'block';
         });
     </script>
 </body>
